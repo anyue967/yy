@@ -5,16 +5,16 @@
         <img src="../assets/logo.png" alt="logo">
       </div>
       <!-- 表单 -->
-      <el-form class="login_form"  label-width="80px">
-        <el-form-item label="登录名">
-          <el-input placeholder="请输入登录名"></el-input>
+      <el-form class="login_form"  label-width="80px" v-bind:model="loginForm" :rules="loginRules" ref="loginFormRef">
+        <el-form-item label="登录名" prop="username">
+          <el-input placeholder="请输入登录名" v-model="loginForm.username" prefix-icon="el-icon-user"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
-          <el-input placeholder="请输入密码"></el-input>
+        <el-form-item label="密码" prop="password">
+          <el-input placeholder="请输入密码" type="password" v-model="loginForm.password" @keyup.enter.native="login" show-password></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">登录</el-button>
-          <el-button type="info">取消</el-button>
+          <el-button type="primary" @click="login">登录</el-button>
+          <el-button type="info" v-on:click="restForm">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -23,7 +23,54 @@
 
 <script>
 export default {
-
+  // 所有的数据放在data中的对象里
+  data() {
+    return { // this.xxx
+      loginForm: { username: '', password: '' },
+      loginRules: {
+        username: [
+          { required: true, message: '请输入登录名', trigger: 'blur' },
+          { min: 2, max: 14, message: '长度在2到14个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在6到15个字符', trigger: 'blur' }
+        ]
+      }
+    } // is here
+  },
+  methods: {
+    // this.restForm
+    restForm() {
+      const name = 'loginFormRef'
+      console.log(this.$children[0], this.$refs.loginFormRef, this.$refs[name])
+      this.$refs[name].resetFields()
+    },
+    login() {
+      this.$refs.loginFormRef.validate(async valid => {
+        console.log(valid)
+        if (valid) {
+        // 提交数据 nginx proxy WSGI Server
+          console.log(this.loginForm)
+          const { data: response } = await this.$http.post('login/', this.loginForm) // 127.0.0.1:8000/test/
+          console.log(response, '@@@@@@@@@@@@@@@@@@')
+          console.log(response.code)
+          if (response.code) {
+            // 失败了，弹出窗口
+            return this.$message.error(response.message)
+          }
+          // 跳转
+          console.log('成功登录了，即将跳转')
+          this.$message('成功登录了，即将跳转')
+          // token 持久化 localStorage
+          window.localStorage.setItem('token', response.access)
+          this.$router.push('/home')
+          // router.push('')
+          // console.log(this)
+        }
+      })
+    }
+  }
 }
 </script>
 
