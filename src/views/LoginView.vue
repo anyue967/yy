@@ -4,19 +4,26 @@
       <div class="avtar_box">
         <img src="../assets/logo.png" alt="logo">
       </div>
-      <!-- 表单 -->
-      <el-form class="login_form"  label-width="80px" v-bind:model="loginForm" :rules="loginRules" ref="loginFormRef">
+      <!-- 表单 start -->
+      <el-form class="login_form" label-width="80px" v-bind:model="loginForm" :rules="loginRules" ref="loginFormRef">
+        <!-- 登录框 -->
         <el-form-item label="登录名" prop="username">
           <el-input placeholder="请输入登录名" v-model="loginForm.username" prefix-icon="el-icon-user"></el-input>
         </el-form-item>
+        <!-- 登录框 -->
+         <!-- 密码框 -->
         <el-form-item label="密码" prop="password">
           <el-input placeholder="请输入密码" type="password" v-model="loginForm.password" @keyup.enter.native="login" show-password></el-input>
         </el-form-item>
+        <!-- 密码框 -->
+        <!-- 登录/取消 -->
         <el-form-item>
           <el-button type="primary" @click="login">登录</el-button>
           <el-button type="info" v-on:click="restForm">取消</el-button>
         </el-form-item>
+        <!-- 登录/取消 -->
       </el-form>
+      <!-- 表单 end -->
     </div>
   </div>
 </template>
@@ -39,13 +46,18 @@ export default {
       }
     } // is here
   },
+  //
   methods: {
-    // this.restForm
+    // this.restForm()
+    // restForm
     restForm() {
+      // 当前Vue组件本身
+      // console.log(this)
       const name = 'loginFormRef'
       console.log(this.$children[0], this.$refs.loginFormRef, this.$refs[name])
       this.$refs[name].resetFields()
     },
+    // login
     login() {
       this.$refs.loginFormRef.validate(async valid => {
         console.log(valid)
